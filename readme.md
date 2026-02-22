@@ -2,9 +2,6 @@ SkelForm runtime for [Kraken Engine](https://krakenengine.org).
 
 ## Usage
 
-Library for running [SkelForm](https://skelform.org) animations in
-[Pygame](https://pygame.org).
-
 ```python
 import skelform_kraken as skf
 ```
