@@ -21,7 +21,9 @@ while kn.window.is_open():
     kn.renderer.clear(kn.Color.WHITE)
 
     anim_frame = skf.time_frame(anim_time, skellington.animations[1], False, True)
-    skellington.bones = skf.animate(skellington, [skellington.animations[1]], [anim_frame], [0])
+    skellington.bones = skf.animate(
+        skellington, [skellington.animations[1]], [anim_frame], [0]
+    )
     bones = skf.construct(
         skellington,
         skf.ConstructOptions(position=kn.Vec2(200, 300), scale=kn.Vec2(0.1, 0.1)),
