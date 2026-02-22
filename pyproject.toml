@@ -1,0 +1,35 @@
+[build-system]
+requires = ["hatchling >= 1.26"]
+build-backend = "hatchling.build"
+
+[project]
+name = "skelform_kraken"
+version = "0.4.0"
+authors = [
+  { name="Retropaint", email="darkglasses1122@gmail.com" },
+]
+description = "SkelForm runtime for Kraken Engine"
+readme = "README.md"
+requires-python = ">=3.9"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+]
+license = "MIT"
+license-files = ["LICEN[CS]E*"]
+dependencies = [
+    "annotated-types==0.7.0",
+    "dacite==1.9.2",
+    "kraken-engine==1.6.1",
+    "pillow==12.1.1",
+    "pydantic==2.12.3",
+    "pydantic_core==2.41.4",
+    "typing-inspection==0.4.2",
+    "typing_extensions==4.15.0",
+]
+
+[tool.setuptools.package-data]
+"skelform_kraken" = ["examples/*"]
+
+[project.scripts]
+demo = "skelform_kraken:examples"
