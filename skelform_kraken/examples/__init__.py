@@ -10,8 +10,7 @@ kn.init()
 kn.window.create("SkelForm Kraken-Engine Demo", 800, 600)
 
 (skellington, ske_atlases) = skf.load(
-    # files("skelform_kraken.examples").joinpath("skellington.skf")
-    "skellington.skf"
+    files("skelform_kraken.examples").joinpath("skellington.skf")
 )
 # (skellina, ska_atlases) = skf.load("skellina.skf")
 anim_time = 0
@@ -86,7 +85,7 @@ while kn.window.is_open():
     skellington_c = copy.deepcopy(skellington)
 
     # point shoulder and head to mouse
-    skel_scale = 0.15
+    skel_scale = 0.1
     shoulder_target = bone("Left Shoulder Target", skellington_c.bones)
     looker = bone("Looker", skellington_c.bones)
     raw_mouse = kn.mouse.get_pos()

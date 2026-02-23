@@ -98,12 +98,15 @@ def draw(
         if not tex:
             continue
 
+        # clip atlas to texture
         tex_imgs[tex.atlas_idx].clip_area = kn.Rect(
             pos=kn.Vec2(tex.offset.x, tex.offset.y),
             size=kn.Vec2(tex.size.x, tex.size.y),
         )
 
+        # render mesh
         if bone.vertices:
+            # boundaries of the texture within the atlas (in 0-1 coordinates)
             lt_tex_x = tex.offset.x / tex_imgs[tex.atlas_idx].size.x
             lt_tex_y = tex.offset.y / tex_imgs[tex.atlas_idx].size.y
             rb_tex_x = (tex.offset.x + tex.size.x) / tex_imgs[
@@ -112,6 +115,8 @@ def draw(
             rb_tex_y = (tex.offset.y + tex.size.y) / tex_imgs[
                 tex.atlas_idx
             ].size.y - lt_tex_y
+
+            # render triangle for every 3 indices
             for idx in range(-1, len(bone.indices), 3):
                 v0 = bone.vertices[bone.indices[idx - 0]]
                 v1 = bone.vertices[bone.indices[idx - 1]]
@@ -139,14 +144,20 @@ def draw(
                 kn.draw.geometry(tex_imgs[tex.atlas_idx], tri)
             continue
 
+        # flip textures if scales are negative
+        tex_imgs[tex.atlas_idx].flip.h = bone.scale.x < 0
+        tex_imgs[tex.atlas_idx].flip.v = bone.scale.y < 0
+
+        # render texture
+        # scale must be kept positive as flipping is done with kn.texture.flip (above)
         kn.renderer.draw(
             tex_imgs[tex.atlas_idx],
             kn.Transform(
                 pos=kn.Vec2(
-                    bone.pos.x - tex.size.x * bone.scale.x / 2,
-                    bone.pos.y - tex.size.y * bone.scale.y / 2,
+                    bone.pos.x - tex.size.x * abs(bone.scale.x) / 2,
+                    bone.pos.y - tex.size.y * abs(bone.scale.y) / 2,
                 ),
-                scale=kn.Vec2(bone.scale.x, bone.scale.y),
+                scale=kn.Vec2(abs(bone.scale.x), abs(bone.scale.y)),
                 angle=-bone.rot,
             ),
         )
