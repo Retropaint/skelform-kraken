@@ -9,7 +9,7 @@ import skelform_kraken as skf
 
 kn.init()
 
-kn.window.create("anim test", 800, 600)
+kn.window.create("SkelForm Kraken-Engine Demo", 800, 600)
 
 (skellington, ske_atlases) = skf.load(
     files("skelform_kraken.examples").joinpath("skellington.skf")
