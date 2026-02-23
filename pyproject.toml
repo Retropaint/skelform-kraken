@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "skelform_kraken"
-version = "0.4.2"
+version = "0.4.3"
 authors = [
   { name="Retropaint", email="darkglasses1122@gmail.com" },
 ]
@@ -20,7 +20,7 @@ license-files = ["LICEN[CS]E*"]
 dependencies = [
     "annotated-types==0.7.0",
     "dacite==1.9.2",
-    "kraken-engine==1.6.1",
+    "kraken-engine>=1.6.0",
     "pillow==12.1.1",
     "pydantic==2.12.3",
     "pydantic_core==2.41.4",
