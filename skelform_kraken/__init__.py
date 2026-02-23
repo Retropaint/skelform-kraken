@@ -8,7 +8,7 @@ from copy import copy
 
 import sys
 
-sys.path.append("../../skelform_python")
+# sys.path.append("../../skelform_python")
 import skelform_python as skfpy
 
 
@@ -27,7 +27,7 @@ class ConstructOptions:
 
 
 # Loads an `.skfe` file.
-def load(path: str) -> Tuple[skfpy.Armature, List[kn.Texture]]:
+def load(path: str):
     with zipfile.ZipFile(path, "r") as zip_file:
         armature_json = json.load(zip_file.open("armature.json"))
 
@@ -60,14 +60,14 @@ def animate(
     animations: list[skfpy.Animation],
     frames: list[int],
     smooth_frames: list[int],
-) -> List[skfpy.Bone]:
+):
     return skfpy.animate(armature, animations, frames, smooth_frames)
 
 
 # Returns the constructed array of bones from this armature.
 #
 # While constructing, several options (positional offset, scale) may be set.
-def construct(armature: skfpy.Armature, options: ConstructOptions) -> List[skfpy.Bone]:
+def construct(armature: skfpy.Armature, options: ConstructOptions):
     final_bones = skfpy.construct(armature)
 
     for bone in final_bones:
@@ -95,9 +95,9 @@ def construct(armature: skfpy.Armature, options: ConstructOptions) -> List[skfpy
 # Recommended: include the whole texture array from the file even if not all will be used,
 # as the provided styles will determine the final appearance.
 def draw(
-    bones: List[skfpy.Bone],
-    styles: List[skfpy.Style],
-    tex_imgs: List[kn.Texture],
+    bones: list[skfpy.Bone],
+    styles: list[skfpy.Style],
+    tex_imgs: list[kn.Texture],
 ):
     bones.sort(key=lambda bone: bone.zindex)
 
