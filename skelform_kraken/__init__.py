@@ -93,13 +93,11 @@ def draw(
 ):
     bones.sort(key=lambda bone: bone.zindex)
 
-    final_textures = skfpy.setup_bone_textures(bones, styles)
-
     for bone in bones:
-        if bone.id not in final_textures:
+        tex = skfpy.get_bone_texture(bone.tex, styles)
+        if not tex:
             continue
 
-        tex = final_textures[bone.id]
         tex_imgs[tex.atlas_idx].clip_area = kn.Rect(
             pos=kn.Vec2(tex.offset.x, tex.offset.y),
             size=kn.Vec2(tex.size.x, tex.size.y),

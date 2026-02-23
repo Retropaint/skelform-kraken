@@ -10,7 +10,8 @@ kn.init()
 kn.window.create("SkelForm Kraken-Engine Demo", 800, 600)
 
 (skellington, ske_atlases) = skf.load(
-    files("skelform_kraken.examples").joinpath("skellington.skf")
+    # files("skelform_kraken.examples").joinpath("skellington.skf")
+    "skellington.skf"
 )
 # (skellina, ska_atlases) = skf.load("skellina.skf")
 anim_time = 0
@@ -113,7 +114,7 @@ while kn.window.is_open():
     )
 
     # Draw Skellington!
-    skf.draw(bones, skellington.styles, ske_atlases)
+    skf.draw(bones, [skellington.styles[1]], ske_atlases)
 
     instructions = kn.Text(font)
     instructions.text = "A - Move Left\nD - Move Right\nSpace - Jump\nSkellington will look at and reach for cursor"
