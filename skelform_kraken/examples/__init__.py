@@ -2,6 +2,7 @@ import pykraken as kn
 import os
 import sys
 import copy
+from importlib.resources import files
 
 sys.path.append("../../skelform_kraken")
 import skelform_kraken as skf
@@ -10,7 +11,9 @@ kn.init()
 
 kn.window.create("anim test", 800, 600)
 
-(skellington, ske_atlases) = skf.load("skellington.skf")
+(skellington, ske_atlases) = skf.load(
+    files("skelform_kraken.examples").joinpath("skellington.skf")
+)
 # (skellina, ska_atlases) = skf.load("skellina.skf")
 anim_time = 0
 dir = 1
