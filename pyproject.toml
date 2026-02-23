@@ -20,7 +20,7 @@ license-files = ["LICEN[CS]E*"]
 dependencies = [
     "annotated-types==0.7.0",
     "dacite==1.9.2",
-    "kraken-engine>=1.6.0",
+    "kraken-engine>=1.6.1",
     "pillow==12.1.1",
     "pydantic==2.12.3",
     "pydantic_core==2.41.4",
@@ -33,4 +33,4 @@ dependencies = [
 "skelform_kraken.examples" = ["*.skf"]
 
 [project.scripts]
-demo = "skelform_kraken.examples:main"
+skelform-demo = "skelform_kraken.examples:main"
