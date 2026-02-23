@@ -21,7 +21,6 @@ dependencies = [
     "annotated-types==0.7.0",
     "dacite==1.9.2",
     "kraken-engine>=1.6.1",
-    "pillow==12.1.1",
     "pydantic==2.12.3",
     "pydantic_core==2.41.4",
     "typing-inspection==0.4.2",
