@@ -5,6 +5,8 @@ import dacite
 from PIL import Image
 from dataclasses import dataclass
 from copy import copy
+import tempfile
+import shutil
 
 import sys
 
@@ -36,21 +38,11 @@ def load(path: str):
 
     with zipfile.ZipFile(path, "r") as zip_file:
         for atlas in armature.atlases:
-            # extract image pixels and populate kn.PixelArray with it,
-            # then apply it to a kn.Texture
-
-            img = Image.open(zip_file.open(atlas.filename))
-            pixels = list(img.getdata())
-            knpixels = kn.PixelArray(kn.Vec2(atlas.size.x, atlas.size.y))
-            for y in range(knpixels.height):
-                for x in range(knpixels.width):
-                    idx = img.size[0] * y + x
-                    color = kn.Color(
-                        pixels[idx][0], pixels[idx][1], pixels[idx][2], pixels[idx][3]
-                    )
-                    knpixels.set_at(kn.Vec2(x, y), color)
-
-            textures.append(kn.Texture(knpixels))
+            with zip_file.open(atlas.filename) as src:
+                with tempfile.NamedTemporaryFile(suffix=".png") as tmp:
+                    shutil.copyfileobj(src, tmp)
+                    tmp.flush()
+                    textures.append(kn.Texture(tmp.name))
 
     return (armature, textures)
 

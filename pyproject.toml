@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "skelform_kraken"
-version = "0.4.6"
+version = "0.4.7"
 authors = [
   { name="Retropaint", email="darkglasses1122@gmail.com" },
 ]
@@ -33,4 +33,4 @@ dependencies = [
 "skelform_kraken.examples" = ["*.skf"]
 
 [project.scripts]
-skelform-demo = "skelform_kraken.examples:main"
+skelform-demo = "skelform_kraken:examples"

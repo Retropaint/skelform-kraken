@@ -3,8 +3,6 @@ import os
 import sys
 import copy
 from importlib.resources import files
-
-sys.path.append("../../skelform_kraken")
 import skelform_kraken as skf
 
 kn.init()
