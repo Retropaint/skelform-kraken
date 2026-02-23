@@ -1,5 +1,17 @@
 SkelForm runtime for [Kraken Engine](https://krakenengine.org).
 
+```
+pip install skelform_kraken
+```
+
+## Demo
+
+After installing the library:
+
+```
+skelform-demo
+```
+
 ## Usage
 
 ```python
