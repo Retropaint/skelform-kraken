@@ -2,7 +2,6 @@ import zipfile
 import json
 import pykraken as kn
 import dacite
-from PIL import Image
 from dataclasses import dataclass
 from copy import copy
 import tempfile
