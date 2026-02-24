@@ -15,13 +15,13 @@ kn.window.create("SkelForm Kraken-Engine Demo", 800, 600)
 # (skellina, ska_atlases) = skf.load("skellina.skf")
 anim_time = 0
 dir = 1
+style = 1
 speed = 5
 last_anim_idx = -1
 anim_idx = 0
 yvel = 0
 ground = kn.window.get_size().y / 2 + 50
 player_pos = kn.Vec2(400, ground)
-
 font = kn.Font("kraken-clean", 24)
 
 
@@ -59,6 +59,10 @@ while kn.window.is_open():
     if kn.key.is_just_pressed(kn.S_SPACE) and player_pos.y >= ground:
         player_pos.y = ground - 1
         yvel = -5
+    if kn.key.is_just_pressed(kn.S_1):
+        style = 1
+    elif kn.key.is_just_pressed(kn.S_2):
+        style = 0
 
     # jumping/falling animations
     if yvel > 0:
@@ -113,10 +117,10 @@ while kn.window.is_open():
     )
 
     # Draw Skellington!
-    skf.draw(bones, [skellington.styles[1]], ske_atlases)
+    skf.draw(bones, [skellington.styles[style], skellington.styles[1]], ske_atlases)
 
     instructions = kn.Text(font)
-    instructions.text = "A - Move Left\nD - Move Right\nSpace - Jump\nSkellington will look at and reach for cursor"
+    instructions.text = "A - Move Left\nD - Move Right\nSpace - Jump\n1, 2 - Change Outfit\nSkellington will look at and reach for cursor"
     instructions.draw(kn.Vec2(10, 10))
 
     kn.renderer.present()
