@@ -115,32 +115,22 @@ def draw(
                 tex.atlas_idx
             ].size.y - lt_tex_y
 
-            # render triangle for every 3 indices
-            for idx in range(-1, len(bone.indices), 3):
-                v0 = bone.vertices[bone.indices[idx - 0]]
-                v1 = bone.vertices[bone.indices[idx - 1]]
-                v2 = bone.vertices[bone.indices[idx - 2]]
-                tri = (
-                    kn.Vertex(
-                        kn.Vec2(v0.pos.x, v0.pos.y),
-                        tex_coord=kn.Vec2(
-                            lt_tex_x + rb_tex_x * v0.uv.x, lt_tex_y + rb_tex_y * v0.uv.y
-                        ),
-                    ),
-                    kn.Vertex(
-                        kn.Vec2(v1.pos.x, v1.pos.y),
-                        tex_coord=kn.Vec2(
-                            lt_tex_x + rb_tex_x * v1.uv.x, lt_tex_y + rb_tex_y * v1.uv.y
-                        ),
-                    ),
-                    kn.Vertex(
-                        kn.Vec2(v2.pos.x, v2.pos.y),
-                        tex_coord=kn.Vec2(
-                            lt_tex_x + rb_tex_x * v2.uv.x, lt_tex_y + rb_tex_y * v2.uv.y
-                        ),
-                    ),
+            # batch all triangles
+            triangles = []
+            for idx in bone.indices:
+                vert = bone.vertices[idx]
+                uv = kn.Vec2(
+                    lt_tex_x + rb_tex_x * vert.uv.x, lt_tex_y + rb_tex_y * vert.uv.y
                 )
-                kn.draw.geometry(tex_imgs[tex.atlas_idx], tri)
+                triangles.append(
+                    kn.Vertex(kn.Vec2(vert.pos.x, vert.pos.y), tex_coord=uv)
+                )
+
+            # draw all triangles at once
+            kn.draw.geometry(
+                tex_imgs[tex.atlas_idx],
+                triangles,
+            )
             continue
 
         # flip textures if scales are negative
