@@ -10,16 +10,19 @@ kn.init()
 kn.window.create("SkelForm Kraken-Engine Demo", 800, 600)
 
 (skellington, ske_atlases) = skf.load(
-    files("skelform_kraken.examples").joinpath("skellington.skf")
+    # files("skelform_kraken.examples").joinpath("skellington.skf")
+    "skellington.skf"
 )
-# (skellina, ska_atlases) = skf.load("skellina.skf")
+# (skellina, ska_atlases) = skf.load("skellington.skf")
 anim_time = 0
 dir = 1
+prev_dir = 1
 style = 1
-speed = 5
+speed = 1
 last_anim_idx = -1
 anim_idx = 0
 yvel = 0
+turned = False
 ground = kn.window.get_size().y / 2 + 50
 player_pos = kn.Vec2(400, ground)
 font = kn.Font("kraken-clean", 24)
@@ -40,7 +43,7 @@ while kn.window.is_open():
     anim_idx = 0
 
     # gravity
-    yvel += 0.1
+    yvel += 0.02
     if player_pos.y > ground:
         yvel = 0
     player_pos.y += yvel
@@ -58,7 +61,7 @@ while kn.window.is_open():
     # jumping
     if kn.key.is_just_pressed(kn.S_SPACE) and player_pos.y >= ground:
         player_pos.y = ground - 1
-        yvel = -5
+        yvel = -3.
     if kn.key.is_just_pressed(kn.S_1):
         style = 1
     elif kn.key.is_just_pressed(kn.S_2):
@@ -85,39 +88,41 @@ while kn.window.is_open():
         skellington, [skellington.animations[anim_idx]], [anim_frame], [20]
     )
 
-    # make immutable edits to armature for construction
-    skellington_c = copy.deepcopy(skellington)
+    if skellington.cached_bones is not None:
+        # point shoulder and head to mouse
+        skel_scale = 0.1
+        shoulder_target = bone("Left Shoulder Target", skellington.bones)
+        looker = bone("Looker", skellington.bones)
+        raw_mouse = kn.mouse.get_pos()
+        mouse = skf.skfpy.Vec2(
+            -player_pos.x / skel_scale * dir + raw_mouse[0] / skel_scale * dir,
+            player_pos.y / skel_scale - raw_mouse[1] / skel_scale,
+        )
+        shoulder_target.pos = mouse
+        looker.pos = mouse
 
-    # point shoulder and head to mouse
-    skel_scale = 0.1
-    shoulder_target = bone("Left Shoulder Target", skellington_c.bones)
-    looker = bone("Looker", skellington_c.bones)
-    raw_mouse = kn.mouse.get_pos()
-    mouse = skf.skfpy.Vec2(
-        -player_pos.x / skel_scale * dir + raw_mouse[0] / skel_scale * dir,
-        player_pos.y / skel_scale - raw_mouse[1] / skel_scale,
-    )
-    shoulder_target.pos = mouse
-    looker.pos = mouse
-
-    # flip shoulder IK constraint if looking the other way
-    looking_back_left = dir == -1 and raw_mouse[0] > player_pos.x
-    looking_back_right = dir != -1 and raw_mouse[0] < player_pos.x
-    if looking_back_left or looking_back_right:
-        bone("Skull", skellington_c.bones).scale.y = -1
-        bone("Hat", skellington_c.bones).rot = -bone("Hat", skellington_c.bones).rot
-        bone("LSIK", skellington_c.bones).ik_constraint = "Clockwise"
-    else:
-        bone("LSIK", skellington_c.bones).ik_constraint = "CounterClockwise"
+        # flip shoulder IK constraint if looking the other way
+        looking_back_left = dir == -1 and raw_mouse[0] > player_pos.x
+        looking_back_right = dir != -1 and raw_mouse[0] < player_pos.x
+        if looking_back_left or looking_back_right:
+            bone("Skull", skellington.bones).scale.y = -1
+            bone("Hat", skellington.bones).rot = -0.1
+            bone("LSIK", skellington.cached_bones).ik_constraint = "Clockwise"
+        else:
+            bone("LSIK", skellington.cached_bones).ik_constraint = "CounterClockwise"
 
     # Construct Skellington
-    bones = skf.construct(
-        skellington_c,
+    skellington.cached_bones = skf.construct(
+        skellington,
         skf.ConstructOptions(position=player_pos, scale=kn.Vec2(0.1 * dir, 0.1)),
     )
 
     # Draw Skellington!
-    skf.draw(bones, [skellington.styles[style], skellington.styles[1]], ske_atlases)
+    skf.draw(
+        skellington.cached_bones,
+        [skellington.styles[style], skellington.styles[1]],
+        ske_atlases,
+    )
 
     instructions = kn.Text(font)
     instructions.text = "A - Move Left\nD - Move Right\nSpace - Jump\n1, 2 - Change Outfit\nSkellington will look at and reach for cursor"

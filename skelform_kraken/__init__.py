@@ -59,9 +59,9 @@ def animate(
 #
 # While constructing, several options (positional offset, scale) may be set.
 def construct(armature: skfpy.Armature, options: ConstructOptions):
-    final_bones = skfpy.construct(armature)
+    armature.cached_bones = skfpy.construct(armature)
 
-    for bone in final_bones:
+    for bone in armature.cached_bones:
         bone.pos.y = -bone.pos.y
 
         bone.pos *= options.scale
@@ -78,7 +78,7 @@ def construct(armature: skfpy.Armature, options: ConstructOptions):
             vert.pos *= skfpy.Vec2(options.scale.x, options.scale.y)
             vert.pos += skfpy.Vec2(options.position.x, options.position.y)
 
-    return final_bones
+    return armature.cached_bones
 
 
 # Draws the bones to the provided screen, using the provided styles and textures.
@@ -90,7 +90,7 @@ def draw(
     styles: list[skfpy.Style],
     tex_imgs: list[kn.Texture],
 ):
-    bones.sort(key=lambda bone: bone.zindex)
+    # bones.sort(key=lambda bone: bone.zindex)
 
     for bone in bones:
         tex = skfpy.get_bone_texture(bone.tex, styles)
