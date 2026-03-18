@@ -10,8 +10,8 @@ kn.init()
 kn.window.create("SkelForm Kraken-Engine Demo", 800, 600)
 
 (skellington, ske_atlases) = skf.load(
-    # files("skelform_kraken.examples").joinpath("skellington.skf")
-    "skellington.skf"
+    files("skelform_kraken.examples").joinpath("skellington.skf")
+    # "skellington.skf"
 )
 # (skellina, ska_atlases) = skf.load("skellington.skf")
 anim_time = 0
