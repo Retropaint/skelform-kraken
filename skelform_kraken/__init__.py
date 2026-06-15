@@ -17,14 +17,17 @@ import skelform_python as skfpy
 class ConstructOptions:
     position: kn.Vec2
     scale: kn.Vec2
+    velocity: kn.Vec2
 
     def __init__(
         self,
         position=kn.Vec2(0, 0),
         scale=kn.Vec2(0.25, 0.25),
+        velocity=kn.Vec2(0, 0),
     ):
         self.position = position
         self.scale = scale
+        self.velocity = velocity
 
 
 # Loads an `.skfe` file.
@@ -70,13 +73,18 @@ def construct(armature: skfpy.Armature, options: ConstructOptions):
 
         bone.rot = skfpy.check_bone_flip(bone.rot, options.scale)
 
-        if not bone.vertices:
-            continue
+        if bone.physics_id != -1:
+            phys = armature.physics[bone.visuals_id]
+            if phys:
+                phys.global_pos -= options.velocity
 
-        for vert in bone.vertices:
-            vert.pos.y = -vert.pos.y
-            vert.pos *= skfpy.Vec2(options.scale.x, options.scale.y)
-            vert.pos += skfpy.Vec2(options.position.x, options.position.y)
+        if bone.visuals_id != -1:
+            visual = armature.visuals[bone.visuals_id]
+            if visual and visual.vertices:
+                for vert in visual.vertices:
+                    vert.pos.y = -vert.pos.y
+                    vert.pos *= skfpy.Vec2(options.scale.x, options.scale.y)
+                    vert.pos += skfpy.Vec2(options.position.x, options.position.y)
 
     return armature.cached_bones
 
@@ -86,14 +94,20 @@ def construct(armature: skfpy.Armature, options: ConstructOptions):
 # Recommended: include the whole texture array from the file even if not all will be used,
 # as the provided styles will determine the final appearance.
 def draw(
-    bones: list[skfpy.Bone],
+    armature: skfpy.Armature,
     styles: list[skfpy.Style],
     tex_imgs: list[kn.Texture],
 ):
     # bones.sort(key=lambda bone: bone.zindex)
 
-    for bone in bones:
-        tex = skfpy.get_bone_texture(bone.tex, styles)
+    for bone in armature.constructed_bones:
+        if bone.visuals_id == -1:
+            continue
+        visual = armature.visuals[bone.visuals_id]
+        if not visual:
+            continue
+
+        tex = skfpy.get_bone_texture(visual.tex, styles)
         if not tex:
             continue
 
@@ -104,7 +118,7 @@ def draw(
         )
 
         # render mesh
-        if bone.vertices:
+        if visual.vertices:
             # boundaries of the texture within the atlas (in 0-1 coordinates)
             lt_tex_x = tex.offset.x / tex_imgs[tex.atlas_idx].size.x
             lt_tex_y = tex.offset.y / tex_imgs[tex.atlas_idx].size.y
@@ -117,8 +131,8 @@ def draw(
 
             # batch all triangles
             triangles = []
-            for idx in bone.indices:
-                vert = bone.vertices[idx]
+            for idx in visual.indices:
+                vert = visual.vertices[idx]
                 uv = kn.Vec2(
                     lt_tex_x + rb_tex_x * vert.uv.x, lt_tex_y + rb_tex_y * vert.uv.y
                 )
