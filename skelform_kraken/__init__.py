@@ -6,6 +6,7 @@ from dataclasses import dataclass
 from copy import copy
 import tempfile
 import shutil
+import math
 
 import sys
 
@@ -71,7 +72,8 @@ def construct(armature: skfpy.Armature, options: ConstructOptions):
         bone.scale *= options.scale
         bone.pos += options.position
 
-        bone.rot = skfpy.check_bone_flip(bone.rot, options.scale)
+        if skfpy.is_facing_left(options.scale):
+            bone.rot = -bone.rot
 
         if bone.physics_id != -1:
             phys = armature.physics[bone.visuals_id]
@@ -117,6 +119,17 @@ def draw(
             size=kn.Vec2(tex.size.x, tex.size.y),
         )
 
+        # will be used to flip pivot rotations if necessary
+        dir = -1 if skfpy.is_facing_left(bone.scale) else 1
+
+        # setup pivot
+        pivot_pos = (
+            skfpy.rotate_vec2(visual.pivot_pos * tex.size, bone.rot * dir)
+            * bone.scale
+            * visual.pivot_scale
+        )
+        pivot_pos.y = -pivot_pos.y
+
         # render mesh
         if visual.vertices:
             # boundaries of the texture within the atlas (in 0-1 coordinates)
@@ -136,8 +149,10 @@ def draw(
                 uv = kn.Vec2(
                     lt_tex_x + rb_tex_x * vert.uv.x, lt_tex_y + rb_tex_y * vert.uv.y
                 )
+                vert_pos = vert.pos
+                vert_pos += pivot_pos
                 triangles.append(
-                    kn.Vertex(kn.Vec2(vert.pos.x, vert.pos.y), tex_coord=uv)
+                    kn.Vertex(kn.Vec2(vert_pos.x, vert_pos.y), tex_coord=uv)
                 )
 
             # draw all triangles at once
@@ -157,13 +172,16 @@ def draw(
             tex_imgs[tex.atlas_idx],
             kn.Transform(
                 pos=kn.Vec2(
-                    bone.pos.x - tex.size.x * abs(bone.scale.x) / 2,
-                    bone.pos.y - tex.size.y * abs(bone.scale.y) / 2,
+                    bone.pos.x + pivot_pos.x - tex.size.x * abs(bone.scale.x) / 2,
+                    bone.pos.y + pivot_pos.y - tex.size.y * abs(bone.scale.y) / 2,
                 ),
                 scale=kn.Vec2(abs(bone.scale.x), abs(bone.scale.y)),
                 angle=-bone.rot,
             ),
         )
+
+        rect = kn.Rect(bone.pos.x - 5, bone.pos.y - 5, 10, 10)
+        kn.draw.rect(rect, color=kn.Color.RED)
 
 
 # Returns the animation frame based on the provided time.
